@@ -20,8 +20,6 @@ Created on Fri May 14 10:28:43 2021
 """
 
 from IPython import get_ipython
-get_ipython().magic('reset -sf')
-
 from scipy import optimize
 from scipy.optimize import curve_fit
 import math
@@ -288,3 +286,36 @@ ax2.legend()
 
 
 
+## Calculate reptation time   
+    
+w = np.array([1e-4, 1e-3, 1e-2]  ) 
+w_log = np.log10(w)
+for i in w:
+    str180_rept = np.log10(str_func(w, popt180, n))
+    ls180_rept  = np.log10(loss_func(w, popt180, n))
+    str160_rept = np.log10(str_func(w, popt160, n))
+    ls160_rept  = np.log10(loss_func(w, popt160, n))
+    
+linear_coef_str180 = np.polyfit(w_log, str180_rept, 1)
+linear_coef_ls180  = np.polyfit(w_log, ls180_rept, 1)    
+x = (linear_coef_ls180[1] - linear_coef_str180[1])/(linear_coef_str180[0] - linear_coef_ls180[0])
+rept_180 = 1/(10**x)
+
+
+linear_coef_str160 = np.polyfit(w_log, str160_rept, 1)
+linear_coef_ls160  = np.polyfit(w_log, ls160_rept, 1)    
+x = (linear_coef_ls160[1] - linear_coef_str160[1])/(linear_coef_str160[0] - linear_coef_ls160[0])
+rept_160 = 1/(10**x)
+
+
+reg_str180 = []
+reg_loss180 =[]
+w_fit = np.array([0.1, 1, 10, 100, 100000])   
+for i in range (0, len(w_fit)):
+   reg_str180.append (10**(linear_coef_str180[0]*math.log10(w_fit[i]) + linear_coef_str180[1]) )
+   reg_loss180.append (10**(linear_coef_ls180[0]*math.log10(w_fit[i]) + linear_coef_ls180[1]) )
+ax1.plot(w_fit, reg_str180, 'r--', label = 'Str 180 terminal regr.')
+ax1.plot(w_fit, reg_loss180, 'r--', label = 'Ls 180 terminal regr.')
+
+ax1.set_ylim([0.1, 1000000])
+leg=ax1.legend()   
