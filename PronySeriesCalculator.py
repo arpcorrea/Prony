@@ -299,13 +299,13 @@ for i in w:
 linear_coef_str180 = np.polyfit(w_log, str180_rept, 1)
 linear_coef_ls180  = np.polyfit(w_log, ls180_rept, 1)    
 x = (linear_coef_ls180[1] - linear_coef_str180[1])/(linear_coef_str180[0] - linear_coef_ls180[0])
-rept_180 = 1/(10**x)
+rept_180 = 1/((10**x)/(2*np.pi))
 
 
 linear_coef_str160 = np.polyfit(w_log, str160_rept, 1)
 linear_coef_ls160  = np.polyfit(w_log, ls160_rept, 1)    
 x = (linear_coef_ls160[1] - linear_coef_str160[1])/(linear_coef_str160[0] - linear_coef_ls160[0])
-rept_160 = 1/(10**x)
+rept_160 = 1/((10**x)/(2*np.pi))
 
 
 reg_str180 = []
