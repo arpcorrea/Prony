@@ -44,6 +44,7 @@ frequency=np.array([300.,
 0.425,
 0.266])
 
+frequency_hz = frequency/(2*np.pi)
 
 loss180 = np.array([8.52E+04,
 6.49E+04,
@@ -131,12 +132,12 @@ count = 0
 for i in range (1,n-1,4):
     flag = 0
     if flag == 0:
-        bound_upper[i] =  1./(10**math.ceil(math.log10(max(frequency)))/(10**(count)))
-        bound_lower[i] =  1/(1.1*10**math.ceil(math.log10(max(frequency)))/(10**(count)))
+        bound_upper[i] =  1.5/(10**math.ceil(math.log10(max(frequency)))/(10**(count)))
+        bound_lower[i] =  0.5/(10**math.ceil(math.log10(max(frequency)))/(10**(count)))
         flag = flag+1
     if flag == 1:
-        bound_upper[i+2] =  1./((0.5*10**math.ceil(math.log10(max(frequency)))/(10**(count))))
-        bound_lower[i+2] =  1/((1.1*0.5*10**math.ceil(math.log10(max(frequency)))/(10**(count))))
+        bound_upper[i+2] =  0.5*1.5/((10**math.ceil(math.log10(max(frequency)))/(10**(count))))
+        bound_lower[i+2] =  0.5*0.5/((10**math.ceil(math.log10(max(frequency)))/(10**(count))))
         flag = 0
     count = count+1
         
@@ -225,7 +226,7 @@ ax1.set_xscale('log')
 
 
 #FIT
-##180
+#180
 ax1.set_xlabel('frequency (rad/s)')
 ax1.set_ylabel('Modulus [Pa]')
 ax1.plot(frequency, loss_fitted180,  color='tab:purple')
@@ -253,39 +254,6 @@ ax1.set_yscale('log')
 ax1.set_xscale('log')
 ax1.legend()
 
-
-t=[]
-for ti in range (0, 100):
-    t.append(ti*0.0002)
-    
-G180 = []   
-G160 = [] 
-for ti in t:
-    summation180 = 0
-    summation160 = 0
-    for i in range (0, n-1, 2):
-        # import pdb; pdb.set_trace()
-        summation180 = summation180 + popt180[i]*np.exp(-ti/popt180[i+1])
-        summation160 = summation160 + popt160[i]*np.exp(-ti/popt160[i+1])
-    G180.append(summation180)    
-    G160.append(summation160)    
-
-fig, ax2 = plt.subplots()
-ax2.set_xlabel('time (s)')
-ax2.set_ylabel('Modulus [Pa]')
-ax2.plot(t, G180, label='Prony180', color='tab:purple')
-
-ax2.set_xlabel('time (s)')
-ax2.set_ylabel('Modulus [Pa]')
-ax2.plot(t, G160, label='Prony160', color='tab:green')
-
-ax2.ticklabel_format(axis="x", style="sci", scilimits=(0,0))
-ax2.ticklabel_format(axis="y", style="sci", scilimits=(0,0))
-
-ax2.legend()
-
-
-
 ## Calculate reptation time   
     
 w = np.array([1e-4, 1e-3, 1e-2]  ) 
@@ -298,14 +266,14 @@ for i in w:
     
 linear_coef_str180 = np.polyfit(w_log, str180_rept, 1)
 linear_coef_ls180  = np.polyfit(w_log, ls180_rept, 1)    
-x = (linear_coef_ls180[1] - linear_coef_str180[1])/(linear_coef_str180[0] - linear_coef_ls180[0])
-rept_180 = 1/((10**x)/(2*np.pi))
+x180 = (linear_coef_ls180[1] - linear_coef_str180[1])/(linear_coef_str180[0] - linear_coef_ls180[0])
+rept_180 = 1/((10**x180)/(2*np.pi))
 
 
 linear_coef_str160 = np.polyfit(w_log, str160_rept, 1)
 linear_coef_ls160  = np.polyfit(w_log, ls160_rept, 1)    
-x = (linear_coef_ls160[1] - linear_coef_str160[1])/(linear_coef_str160[0] - linear_coef_ls160[0])
-rept_160 = 1/((10**x)/(2*np.pi))
+x160 = (linear_coef_ls160[1] - linear_coef_str160[1])/(linear_coef_str160[0] - linear_coef_ls160[0])
+rept_160 = 1/((10**x160)/(2*np.pi))
 
 
 reg_str180 = []
@@ -313,7 +281,7 @@ reg_loss180 =[]
 
 reg_str160 = []
 reg_loss160 =[]
-w_fit = np.array([0.1, 1, 10, 100, 100000])   
+w_fit = np.array([0.1, 1, 10, 100, 10000])   
 for i in range (0, len(w_fit)):
    reg_str180.append (10**(linear_coef_str180[0]*math.log10(w_fit[i]) + linear_coef_str180[1]) )
    reg_loss180.append (10**(linear_coef_ls180[0]*math.log10(w_fit[i]) + linear_coef_ls180[1]) )
@@ -326,3 +294,42 @@ ax1.plot(w_fit, reg_loss160, 'r--', label = 'Ls 180 terminal regr.', color = 'ta
 
 ax1.set_ylim([0.1, 1000000])
 leg=ax1.legend()   
+
+
+#Calculate time dependent 
+
+t=[]
+for ti in range (0, 100):
+    t.append(ti*0.00005)
+
+popt180_hz = popt180.copy()
+popt160_hz = popt160.copy()
+for i in range (1,len(popt160_hz),2):
+    popt180_hz[i] = popt180_hz[i]/(2*np.pi)  
+    popt160_hz[i] = popt160_hz[i]/(2*np.pi)    
+    
+G180 = []   
+G160 = [] 
+for ti in t:
+    summation180 = 0
+    summation160 = 0
+    for i in range (0, n-1, 2):
+        # import pdb; pdb.set_trace()
+        summation180 = summation180 + popt180_hz[i]*np.exp(-ti/popt180_hz[i+1])
+        summation160 = summation160 + popt160_hz[i]*np.exp(-ti/popt160_hz[i+1])
+    G180.append(summation180)    
+    G160.append(summation160)    
+
+fig2, ax2 = plt.subplots()
+ax2.set_xlabel('time (s)')
+ax2.set_ylabel('Modulus [Pa]')
+ax2.plot(t, G180, label='Prony180', color='tab:purple')
+
+ax2.set_xlabel('time (s)')
+ax2.set_ylabel('Modulus [Pa]')
+ax2.plot(t, G160, label='Prony160', color='tab:green')
+
+ax2.ticklabel_format(axis="x", style="sci", scilimits=(0,0))
+ax2.ticklabel_format(axis="y", style="sci", scilimits=(0,0))
+
+ax2.legend()
