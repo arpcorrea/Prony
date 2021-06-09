@@ -230,44 +230,96 @@ ax1.set_xscale('log')
 
 
 
-#FIT
-#180
-ax1.set_xlabel('frequency (rad/s)')
-ax1.set_ylabel('Modulus [Pa]')
-ax1.plot(frequency, loss_fitted180,  color='tab:purple')
-ax1.set_yscale('log')
-ax1.set_xscale('log')
+# #FIT
+# #180
+# ax1.set_xlabel('frequency (rad/s)')
+# ax1.set_ylabel('Modulus [Pa]')
+# ax1.plot(frequency, loss_fitted180,  color='tab:purple')
+# ax1.set_yscale('log')
+# ax1.set_xscale('log')
+
+# ax1.set_xlabel('frequency (rad/s)')
+# ax1.set_ylabel('Modulus [Pa]')
+# ax1.plot(frequency, storage_fitted180, label='Prony', color='tab:purple')
+# ax1.set_yscale('log')
+# ax1.set_xscale('log')
+
+
+# ##160
+# ax1.set_xlabel('frequency (rad/s)')
+# ax1.set_ylabel('Modulus [Pa]')
+# ax1.plot(frequency, loss_fitted160,  color='tab:green')
+# ax1.set_yscale('log')
+# ax1.set_xscale('log')
+
+# ax1.set_xlabel('frequency (rad/s)')
+# ax1.set_ylabel('Modulus [Pa]')
+# ax1.plot(frequency, storage_fitted160, label='Prony', color='tab:green')
+# ax1.set_yscale('log')
+# ax1.set_xscale('log')
+# ax1.legend()
+
+
+
+
+
+
+
+# ---------- NEW CONTENT
+
+LowerBound = np.zeros(n)
+UpperBound = np.ones(n)*np.infty
+
+result180 = optimize.least_squares(str_func2, popt180, args = (frequency, n, storage180), bounds=(LowerBound, UpperBound))
+params180 = result180.x
+
+result160 = optimize.least_squares(str_func2, popt160, args = (frequency, n, storage160), bounds=(LowerBound, UpperBound))
+params160 = result160.x
+
+
+
+storage2_fitted180 = str_func(frequency, params180, n)
+loss2_fitted180 = loss_func(frequency, params180, n)
+storage2_fitted160 = str_func(frequency, params160, n)
+loss2_fitted160 = loss_func(frequency, params160, n)
+
 
 ax1.set_xlabel('frequency (rad/s)')
 ax1.set_ylabel('Modulus [Pa]')
-ax1.plot(frequency, storage_fitted180, label='Prony', color='tab:purple')
+ax1.plot(frequency, storage2_fitted180,  color='tab:red')
 ax1.set_yscale('log')
 ax1.set_xscale('log')
 
-
-##160
-ax1.set_xlabel('frequency (rad/s)')
-ax1.set_ylabel('Modulus [Pa]')
-ax1.plot(frequency, loss_fitted160,  color='tab:green')
-ax1.set_yscale('log')
-ax1.set_xscale('log')
 
 ax1.set_xlabel('frequency (rad/s)')
 ax1.set_ylabel('Modulus [Pa]')
-ax1.plot(frequency, storage_fitted160, label='Prony', color='tab:green')
+ax1.plot(frequency, loss2_fitted180,  color='tab:red')
 ax1.set_yscale('log')
 ax1.set_xscale('log')
-ax1.legend()
+
+
+ax1.set_xlabel('frequency (rad/s)')
+ax1.set_ylabel('Modulus [Pa]')
+ax1.plot(frequency, storage2_fitted160,  color='tab:blue')
+ax1.set_yscale('log')
+ax1.set_xscale('log')
+
+
+ax1.set_xlabel('frequency (rad/s)')
+ax1.set_ylabel('Modulus [Pa]')
+ax1.plot(frequency, loss2_fitted160,  color='tab:blue')
+ax1.set_yscale('log')
+ax1.set_xscale('log')
 
 ## Calculate reptation time   
     
 w = np.array([1e-4, 1e-3, 1e-2]  ) 
 w_log = np.log10(w)
 for i in w:
-    str180_rept = np.log10(str_func(w, popt180, n))
-    ls180_rept  = np.log10(loss_func(w, popt180, n))
-    str160_rept = np.log10(str_func(w, popt160, n))
-    ls160_rept  = np.log10(loss_func(w, popt160, n))
+    str180_rept = np.log10(str_func(w, params180, n))
+    ls180_rept  = np.log10(loss_func(w, params180, n))
+    str160_rept = np.log10(str_func(w, params160, n))
+    ls160_rept  = np.log10(loss_func(w, params160, n))
     
 linear_coef_str180 = np.polyfit(w_log, str180_rept, 1)
 linear_coef_ls180  = np.polyfit(w_log, ls180_rept, 1)    
@@ -299,67 +351,3 @@ ax1.plot(w_fit, reg_loss160, 'r--', label = 'Ls 180 terminal regr.', color = 'ta
 
 ax1.set_ylim([0.1, 1000000])
 leg=ax1.legend()   
-
-
-#Calculate time dependent 
-
-t=[]
-for ti in range (0, 100):
-    t.append(ti*0.00005)
-
-popt180_hz = popt180.copy()
-popt160_hz = popt160.copy()
-for i in range (1,len(popt160_hz),2):
-    popt180_hz[i] = popt180_hz[i]/(2*np.pi)  
-    popt160_hz[i] = popt160_hz[i]/(2*np.pi)    
-    
-G180 = []   
-G160 = [] 
-for ti in t:
-    summation180 = 0
-    summation160 = 0
-    for i in range (0, n-1, 2):
-        # import pdb; pdb.set_trace()
-        summation180 = summation180 + popt180_hz[i]*np.exp(-ti/popt180_hz[i+1])
-        summation160 = summation160 + popt160_hz[i]*np.exp(-ti/popt160_hz[i+1])
-    G180.append(summation180)    
-    G160.append(summation160)    
-
-fig2, ax2 = plt.subplots()
-ax2.set_xlabel('time (s)')
-ax2.set_ylabel('Modulus [Pa]')
-ax2.plot(t, G180, label='Prony180', color='tab:purple')
-
-ax2.set_xlabel('time (s)')
-ax2.set_ylabel('Modulus [Pa]')
-ax2.plot(t, G160, label='Prony160', color='tab:green')
-
-ax2.ticklabel_format(axis="x", style="sci", scilimits=(0,0))
-ax2.ticklabel_format(axis="y", style="sci", scilimits=(0,0))
-
-ax2.legend()
-
-
-# ---------- NEW CONTENT
-
-LowerBound = np.zeros(n)
-UpperBound = np.ones(n)*np.infty
-result = optimize.least_squares(str_func2, popt180, args = (frequency, n, storage180), bounds=(LowerBound, UpperBound))
-params = result.x
-
-
-storage2_fitted180 = str_func(frequency, params, n)
-loss2_fitted180 = loss_func(frequency, params, n)
-
-ax1.set_xlabel('frequency (rad/s)')
-ax1.set_ylabel('Modulus [Pa]')
-ax1.plot(frequency, storage2_fitted180,  color='tab:purple')
-ax1.set_yscale('log')
-ax1.set_xscale('log')
-
-
-ax1.set_xlabel('frequency (rad/s)')
-ax1.set_ylabel('Modulus [Pa]')
-ax1.plot(frequency, loss2_fitted180,  color='tab:purple')
-ax1.set_yscale('log')
-ax1.set_xscale('log')
