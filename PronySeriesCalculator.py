@@ -167,7 +167,12 @@ def str_func(w, x, n):
     y_str = summation_str
     return y_str
 
-
+def str_func2 (x, w, n, l):
+    summation_str = 0
+    for i in range (0,n,2): 
+        summation_str = summation_str + ((x[i]*w**2*x[i+1]**2)/(1+(w**2*x[i+1]**2))) 
+    y_str = summation_str
+    return y_str-l
 
 
 
@@ -333,3 +338,28 @@ ax2.ticklabel_format(axis="x", style="sci", scilimits=(0,0))
 ax2.ticklabel_format(axis="y", style="sci", scilimits=(0,0))
 
 ax2.legend()
+
+
+# ---------- NEW CONTENT
+
+LowerBound = np.zeros(n)
+UpperBound = np.ones(n)*np.infty
+result = optimize.least_squares(str_func2, popt180, args = (frequency, n, storage180), bounds=(LowerBound, UpperBound))
+params = result.x
+
+
+storage2_fitted180 = str_func(frequency, params, n)
+loss2_fitted180 = loss_func(frequency, params, n)
+
+ax1.set_xlabel('frequency (rad/s)')
+ax1.set_ylabel('Modulus [Pa]')
+ax1.plot(frequency, storage2_fitted180,  color='tab:purple')
+ax1.set_yscale('log')
+ax1.set_xscale('log')
+
+
+ax1.set_xlabel('frequency (rad/s)')
+ax1.set_ylabel('Modulus [Pa]')
+ax1.plot(frequency, loss2_fitted180,  color='tab:purple')
+ax1.set_yscale('log')
+ax1.set_xscale('log')
