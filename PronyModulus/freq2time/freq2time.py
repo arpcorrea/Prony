@@ -51,7 +51,7 @@ class Transf2TimeDomain:
             t[i] = i*0.00005 
         dict_G = {}     
         for data_set in optimization.dict_opt:
-            popt = optimization.dict_opt[data_set]
+            popt = optimization.dict_opt[data_set].copy()
             for i in range (1, len(popt),2):
                 popt[i] = popt[i]/(2*np.pi)
             G = np.zeros((len(t),2))

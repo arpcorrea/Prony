@@ -25,12 +25,12 @@ class InitialBounds:
             for i in range (1,data.n-1,4):
                 flag = 0
                 if flag == 0:
-                    bound_upper[i] =  1.5/(10**math.ceil(math.log10(max(data.data_dict[data_set][:,0])))/(10**(count)))
-                    bound_lower[i] =  0.5/(10**math.ceil(math.log10(max(data.data_dict[data_set][:,0])))/(10**(count)))
+                    bound_upper[i] =  5./(10**math.ceil(math.log10(max(data.data_dict[data_set][:,0])))/(10**(count)))
+                    bound_lower[i] =  4.5/(10**math.ceil(math.log10(max(data.data_dict[data_set][:,0])))/(10**(count)))
                     flag = flag+1
                 if flag == 1:
-                    bound_upper[i+2] =  0.5*1.5/((10**math.ceil(math.log10(max(data.data_dict[data_set][:,0])))/(10**(count))))
-                    bound_lower[i+2] =  0.5*0.5/((10**math.ceil(math.log10(max(data.data_dict[data_set][:,0])))/(10**(count))))
+                    bound_upper[i+2] =  1.05/(10**math.ceil(math.log10(max(data.data_dict[data_set][:,0])))/(10**(count)))
+                    bound_lower[i+2] =  .95/(10**math.ceil(math.log10(max(data.data_dict[data_set][:,0])))/(10**(count)))
                     flag = 0
                 count = count+1
             value[:,0] = bound_lower
