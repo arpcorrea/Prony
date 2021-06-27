@@ -20,10 +20,11 @@ int_func = Functions()
 
 curvefitting = CurveFit(data, bounds, int_func)
 
-optimization = FinalOptimization(data, curvefitting.dict_opt, int_func)
+optimization = FinalOptimization(data, curvefitting.dict_opt, int_func, bounds.bound_dict)
 
 reptation_time = ReptationTime(data, optimization.dict_opt, int_func)
 
 transf_to_time = Transf2TimeDomain(data.n,optimization)
 
+# plot = Plot(data.data_dict, curvefitting.dict_fitted, reptation_time.dict_reg, transf_to_time.dict_G)
 plot = Plot(data.data_dict, optimization.fitted_dict, reptation_time.dict_reg, transf_to_time.dict_G)

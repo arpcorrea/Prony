@@ -16,6 +16,7 @@ class CurveFit:
         dict_opt = {}
         for data_set in data.data_dict:
             # popt180, pcov180 = curve_fit(fit_storage      , frequency                   , storage180                   , bounds=(bound_lower, bound_upper), maxfev = 350000)
+            # import pdb; pdb.set_trace()
             popt,       pcov = curve_fit(int_func.fit_storage, data.data_dict[data_set][:,0], data.data_dict[data_set][:,1], bounds=(bounds.bound_dict[data_set][:,0], bounds.bound_dict[data_set][:,1]), maxfev = 350000)
             dict_opt[data_set] = popt        
         self.dict_opt = dict_opt.copy()

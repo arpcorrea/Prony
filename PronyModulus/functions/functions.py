@@ -10,7 +10,7 @@ class Functions:
         fit_str =  (G1*w**2*t1**2)/(1+w**2*t1**2) + (G2*w**2*t2**2)/(1+w**2*t2**2) + (G3*w**2*t3**2)/(1+w**2*t3**2) + (G4*w**2*t4**2)/(1+w**2*t4**2) + (G5*w**2*t5**2)/(1+w**2*t5**2) + (G6*w**2*t6**2)/(1+w**2*t6**2) 
         return fit_str
 
-    def fit_loss (w, G1, t1, G2, t2, G3, t3, G4, t4, G5, t5, G6, t6):
+    def fit_loss (self,w, G1, t1, G2, t2, G3, t3, G4, t4, G5, t5, G6, t6):
         fit_loss = G1*w*t1/(1+w**2*t1**2) + G2*w*t2/(1+w**2*t2**2) + G3*w*t3/(1+w**2*t3**2) + G4*w*t4/(1+w**2*t4**2) + G5*w*t5/(1+w**2*t5**2) + G6*w*t6/(1+w**2*t6**2) 
         return fit_loss
     

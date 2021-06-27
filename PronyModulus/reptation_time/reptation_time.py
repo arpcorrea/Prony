@@ -31,7 +31,7 @@ class ReptationTime:
             linear_coef_str = np.polyfit(w_log, str_rept, 1)
             linear_coef_ls  = np.polyfit(w_log, ls_rept, 1)    
             x = (linear_coef_ls[1] - linear_coef_str[1])/(linear_coef_str[0] - linear_coef_ls[0])
-            rept_time = 1/((10**x)/(2*np.pi))
+            rept_time = 1/(10**x)
             dict_rept_time[data_set] = rept_time        
             
             for i in range (0, len(w_reg)):
