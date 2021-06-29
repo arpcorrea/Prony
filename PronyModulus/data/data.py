@@ -33,6 +33,6 @@ class Data:
             n=p*2*math.ceil(math.log10(max(w)-math.log10(min(w))))
             
             self.data_dict = data_dict.copy()
-            self.n = 12
+            self.n = 6
     
 

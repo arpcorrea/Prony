@@ -16,11 +16,11 @@ data = Data(xl,p)
 
 bounds=InitialBounds(data)
         
-int_func = Functions()
+int_func = Functions(bounds)
 
 curvefitting = CurveFit(data, bounds, int_func)
 
-optimization = FinalOptimization(data, curvefitting.dict_opt, int_func, bounds.bound_dict)
+optimization = FinalOptimization(data, curvefitting.dict_opt, int_func, bounds)
 
 reptation_time = ReptationTime(data, optimization.dict_opt, int_func)
 

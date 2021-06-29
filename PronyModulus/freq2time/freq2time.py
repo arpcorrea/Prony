@@ -48,18 +48,15 @@ class Transf2TimeDomain:
     def calc_time(self, n, optimization):            
         t=np.zeros(100)
         for i in range (0, len(t)):
-            t[i] = i*0.00005 
+            t[i] = i*0.005 
         dict_G = {}     
         for data_set in optimization.dict_opt:
             popt = optimization.dict_opt[data_set].copy()
-            for i in range (1, len(popt),2):
-                popt[i] = popt[i]/(2*np.pi)
             G = np.zeros((len(t),2))
             for i in range(0, len(t)):   
                 summation = 0                             
                 for l in range (0, n-1, 2):
-                    # import pdb; pdb.set_trace()
-                    summation = summation + popt[l]*np.exp(-t[i]/popt[l+1])
+                    summation = summation + popt[l]*np.exp(-t[i]/optimization.t[l])
                 G[i,1] = summation
                 G[i,0] = t[i]
                 dict_G[data_set] = G
