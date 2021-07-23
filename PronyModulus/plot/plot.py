@@ -18,7 +18,7 @@ class Plot:
         fig, ax1 = plt.subplots()
         ax1.set_yscale('log')
         ax1.set_xscale('log')    
-        ax1.set_xlabel('frequency (rad/s)')
+        ax1.set_xlabel('frequency (Hz)')
         ax1.set_ylabel('Modulus [Pa]')
         ax1.set_ylim([0.1, 1000000])
      
